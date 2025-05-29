@@ -1,102 +1,31 @@
-# 🖼️ Conversão Automática de Imagens para WebP
+# Conversão automática de imagens para WebP em sites WordPress
 
-Este repositório contém um script interativo para converter todas as imagens dos sites WordPress hospedados em `/var/www` para o formato `.webp`, recomendado pelo Google para melhor performance e ranqueamento.
+### 👤 Autor
 
-O objetivo é ajudar devs, sysadmins e equipes de suporte a aplicarem boas práticas de otimização de imagens de forma automática e segura, com suporte a servidores Nginx e múltiplos domínios.
-
----
-
-## 📜 Sobre o script
-
-**Arquivo:** `converte-todos-para-webp.sh`  
-**Criado por:** [Rarysson](https://github.com/RaryssonPereira)  
-**Objetivo:** Localizar imagens em sites WordPress e convertê-las para `.webp`, atualizando somente as que forem novas ou modificadas, além de configurar o Nginx para servir essas imagens de forma otimizada.
+**Rarysson Pereira**  
+Analista de Desenvolvimento de Sistemas e Infraestrutura  
+🗓️ Criado em: 29/05/2025  
+[LinkedIn](https://www.linkedin.com/in/rarysson-pereira?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app) • [Instagram](https://www.instagram.com/raryssonpereira?igsh=MXhhb3N2MW1yNzl3cA==)
 
 ---
 
-## 🔧 O que o script faz?
+## 🧠 Por que converter imagens para WebP?
 
-1. Instala automaticamente o pacote `webp` se o comando `cwebp` não estiver disponível.
-2. Localiza sites WordPress no caminho `/var/www/*/wp-content/uploads`.
-3. Pergunta qual site deseja processar.
-4. Converte todas as imagens `.jpg`, `.jpeg`, `.png`, `.gif` para `.webp` **somente se ainda não existirem** ou se estiverem desatualizadas.
-5. Cria o arquivo `/etc/nginx/conf.d/webp.conf` com mapeamento de suporte ao formato `.webp` (caso não exista).
-6. Lista todos os domínios configurados em `/etc/nginx/sites-enabled/` e permite escolher qual deseja alterar.
-7. Insere o bloco `location` com regras de entrega de `.webp` dentro de todos os blocos `server` do domínio selecionado.
-8. Testa a configuração com `nginx -t` e recarrega automaticamente (`nginx -s reload`) se estiver válida.
+Você provavelmente já ouviu falar dos formatos **JPEG** e **PNG**, que são amplamente utilizados na internet para exibir imagens. Embora populares, esses formatos **não são os mais eficientes** quando o assunto é **desempenho e otimização de carregamento** em sites modernos.
 
----
+Com o crescimento da exigência por **velocidade de carregamento**, **experiência do usuário** e **bom ranqueamento no Google**, surgiu a necessidade de utilizar **formatos de imagem mais leves** sem perder qualidade visual. Entre os formatos mais modernos recomendados, estão:
 
-## 🚨 Requisitos antes de usar
+- **JPEG 2000**
+- **JPEG XR**
+- **WebP**
 
-- Servidor Linux com WordPress instalado em `/var/www`
-- Nginx como servidor web (com arquivos em `/etc/nginx/sites-enabled/`)
-- Acesso root ou permissão sudo
-- Testado em Ubuntu Server (20.04 ou superior)
+De acordo com o [Google PageSpeed Insights](https://web.dev/serve-images-webp/), o **WebP é o formato com maior compatibilidade entre navegadores**, além de oferecer uma **compactação superior**, reduzindo significativamente o tamanho das imagens.
 
----
+### ✅ Vantagens do WebP
 
-## ▶️ Como usar
+- **Tamanho reduzido**: imagens menores sem perda perceptível de qualidade.
+- **Compatibilidade ampla**: suportado pela maioria dos navegadores modernos (Chrome, Firefox, Edge, Opera, etc.).
+- **Recomendação do Google**: melhora a pontuação no PageSpeed e SEO técnico.
+- **Ideal para WordPress**: acelera o carregamento de páginas e melhora a performance geral do site.
 
-### 1. Baixe o script
-
-```bash
-git clone https://github.com/RaryssonPereira/converte-todos-para-webp.git
-cd converte-todos-para-webp
-```
-
-### 2. Torne o script executável
-
-```bash
-chmod +x converte-todos-para-webp.sh
-```
-
-### 3. Execute o script
-
-```bash
-./converte-todos-para-webp.sh
-```
-
----
-
-## 💡 Como funciona a conversão?
-
-O script verifica cada imagem e aplica a lógica abaixo:
-
-- ✅ Se **a versão `.webp` já existir e estiver atualizada**, a imagem é ignorada.
-- 🔁 Se **a versão `.webp` existir mas estiver desatualizada**, ela é atualizada.
-- 🆕 Se **a versão `.webp` ainda não existir**, ela será criada.
-
-Tudo isso com suporte silencioso via `cwebp -quiet`.
-
----
-
-## 🧩 Exemplo de configuração Nginx adicionada
-
-```nginx
-location ~*  \.(jpg|jpeg|png|gif)$ {
-    add_header Vary Accept;
-    try_files $uri$webp_extension $uri =404;
-    expires 7d;
-}
-```
-
----
-
-## ❤️ Contribuindo
-
-Sinta-se à vontade para enviar sugestões ou Pull Requests com melhorias, suporte a outros diretórios ou novos formatos de imagem.
-
----
-
-## 📜 Licença
-
-Este projeto está sob a licença MIT.  
-Você pode usar, modificar e distribuir como quiser.
-
----
-
-## ✨ Créditos
-
-Criado com 💡 por **Rarysson**,  
-para ajudar sites WordPress a atingirem máxima performance com uso eficiente de imagens.
+> 💡 **Conclusão**: Utilizar o formato WebP é essencial para quem busca **mais performance, melhor experiência de navegação** e **boas práticas de SEO** em portais WordPress.
