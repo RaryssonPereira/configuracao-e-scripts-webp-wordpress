@@ -1,135 +1,99 @@
 #!/bin/bash
-set -euo pipefail
 
-# ⚙️ Verifica e instala automaticamente o pacote 'webp' se não estiver instalado
+# === SCRIPT: converte-todos-para-webp.sh ===
+# Este script converte todas as imagens de um diretório (como wp-content/uploads) para o formato .webp.
+# Ele cria ou atualiza a versão .webp apenas se ela não existir ou se estiver desatualizada em relação à imagem original.
+# Ideal para uso manual em sites WordPress após migração ou como manutenção periódica.
+
+# ---------------------------------------------------------
+# ETAPA 1: Verifica se o utilitário 'cwebp' está instalado
+# ---------------------------------------------------------
+
+# Verifica se o comando 'cwebp' está disponível no sistema
 if ! command -v cwebp &> /dev/null; then
-    echo "🔧 O pacote 'webp' não está instalado. Instalando automaticamente..."
+    echo "🔧 O utilitário 'cwebp' não está instalado. Instalando automaticamente..."
+
+    # Atualiza a lista de pacotes e instala o pacote 'webp', que contém o comando cwebp
     sudo apt update && sudo apt install -y webp
 fi
 
-# 📁 Verifica se o arquivo /etc/nginx/conf.d/webp.conf existe, se não, cria com conteúdo adequado
-NGINX_WEBP_CONF="/etc/nginx/conf.d/webp.conf"
-if [ ! -f "$NGINX_WEBP_CONF" ]; then
-    echo "📝 Criando o arquivo de configuração Nginx para suporte a .webp: $NGINX_WEBP_CONF"
-    sudo tee "$NGINX_WEBP_CONF" > /dev/null <<EOF
-map \$http_accept \$webp_extension_accept {
-    default "";
-    "~*webp" ".webp";
-}
+# ---------------------------------------------------------
+# ETAPA 2: Valida o argumento passado para o script
+# ---------------------------------------------------------
 
-map \$http_user_agent \$webp_extension {
-    default \$webp_extension_accept;
-    "~Firefox" ".webp";
-    "~iPhone" "";
-}
-EOF
-else
-    echo "✅ Arquivo Nginx para .webp já existe: $NGINX_WEBP_CONF"
+# Se o primeiro argumento ($1) estiver vazio ou não for um diretório válido
+if [ -z "$1" ] || [ ! -d "$1" ]; then
+    echo "❌ Por favor, forneça um diretório válido como argumento."
+    echo "Uso correto: bash converte-todos-para-webp.sh /var/www/site/wp-content/uploads"
+    exit 1  # Encerra o script com código de erro
 fi
 
-# 🌐 Busca diretórios WordPress em /var/www e permite ao usuário escolher qual processar
-echo "🔍 Verificando sites em /var/www..."
-mapfile -t SITES < <(find /var/www -maxdepth 2 -type d -name 'wp-content' -exec dirname {} \; | sort)
+# Salva o diretório informado na variável DIRETORIO
+DIRETORIO="$1"
 
-if [ ${#SITES[@]} -eq 0 ]; then
-    echo "❌ Nenhum site WordPress encontrado em /var/www."
-    exit 1
-fi
+# Mostra qual diretório será processado
+echo "✅ Iniciando conversão no diretório: $DIRETORIO"
 
-echo "📋 Sites encontrados:"
-for i in "${!SITES[@]}"; do
-    echo "  [$i] ${SITES[$i]}"
-done
+# ---------------------------------------------------------
+# ETAPA 3: Busca e armazena todas as imagens do diretório
+# ---------------------------------------------------------
 
-read -rp "👉 Digite o número do site que deseja processar: " SITE_INDEX
-DIRETORIO="${SITES[$SITE_INDEX]}/wp-content/uploads"
+# Cria um arquivo temporário para guardar a lista de imagens encontradas
+arquivo_de_imagens=$(mktemp /tmp/webp_todos.XXXXXX)
 
-echo "✅ Diretório escolhido para conversão: $DIRETORIO"
+# Busca arquivos com extensões .png, .jpg, .jpeg e .gif, ignorando maiúsculas/minúsculas
+# A opção -type f garante que só arquivos sejam listados (não diretórios)
+find "$DIRETORIO" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.gif' \) > "$arquivo_de_imagens"
 
-# 🧾 Cria um arquivo temporário para armazenar os caminhos das imagens encontradas
-TMP_IMAGENS=$(mktemp /tmp/webp_imgs.XXXXXX)
+# Conta quantas imagens foram encontradas
+quantidade_de_imagens=$(wc -l < "$arquivo_de_imagens")
 
-# 🖼️ Extensões de imagem suportadas
-EXTENSOES="\.(png|jpg|jpeg|gif|PNG|JPG|JPEG|GIF)$"
+# Inicializa um contador para mostrar o progresso
+posicao_atual=0
 
-# 🔍 Busca por arquivos modificados nos últimos 3 minutos
-find "$DIRETORIO" -type f | grep -E "$EXTENSOES" > "$TMP_IMAGENS"
+# ---------------------------------------------------------
+# ETAPA 4: Processa imagem por imagem
+# ---------------------------------------------------------
 
-# 📊 Conta o número total de imagens encontradas
-TOTAL=$(wc -l < "$TMP_IMAGENS")
-POS=0
+# Lê o arquivo linha por linha (cada linha contém o caminho completo de uma imagem)
+while IFS= read -r arquivo; do
+    # Incrementa a posição atual no progresso
+    posicao_atual=$((posicao_atual + 1))
 
-# 🔁 Loop para processar cada imagem
-while IFS= read -r IMG; do
-    ((POS++))
-    NOME=$(basename "$IMG")
-    WEBP="${IMG}.webp"
+    # Extrai o nome do arquivo (sem o caminho)
+    nome_arquivo=$(basename "$arquivo")
 
-    echo -e '\n########################################################################\n'
-    echo "📂 Arquivo $POS de $TOTAL: $NOME"
+    # Define o caminho do arquivo .webp correspondente
+    arquivo_webp="${arquivo}.webp"
 
-    if [ -e "$WEBP" ]; then
-        if [ "$IMG" -nt "$WEBP" ]; then
-            echo "🔁 Atualizando versão .webp (imagem original mais recente)."
-            cwebp -quiet "$IMG" -o "$WEBP"
+    # Se o arquivo .webp já existe
+    if [ -e "$arquivo_webp" ]; then
+        # Compara datas: se o arquivo original for mais novo que o .webp
+        if [ "$arquivo" -nt "$arquivo_webp" ]; then
+            echo -e '\n########################################################################'
+            echo "📸 [$posicao_atual/$quantidade_de_imagens] Atualizando versão webp de $nome_arquivo"
+            cwebp "$arquivo" -o "$arquivo_webp"
+            echo '########################################################################'
         else
-            echo "✔️ Versão .webp já está atualizada. Nada a fazer."
+            # Se o .webp já está atualizado, exibe aviso e segue para a próxima imagem
+            echo "✔️ [$posicao_atual/$quantidade_de_imagens] Versão webp de $nome_arquivo já está atualizada."
         fi
     else
-        echo "🆕 Criando versão .webp de $NOME"
-        cwebp -quiet "$IMG" -o "$WEBP"
+        # Se o arquivo .webp ainda não existe, cria a nova versão
+        echo -e '\n########################################################################'
+        echo "🆕 [$posicao_atual/$quantidade_de_imagens] Criando versão webp de $nome_arquivo"
+        cwebp "$arquivo" -o "$arquivo_webp"
+        echo '########################################################################'
     fi
-    echo -e '\n########################################################################\n'
-done < "$TMP_IMAGENS"
 
-rm -f -- "$TMP_IMAGENS"
+done < "$arquivo_de_imagens"
 
-# 🌐 Listar domínios disponíveis em /etc/nginx/sites-enabled/
-echo "🔍 Verificando arquivos de configuração em /etc/nginx/sites-enabled/"
-mapfile -t NGINX_SITES < <(find /etc/nginx/sites-enabled -type f -name "*.conf" | sort)
+# ---------------------------------------------------------
+# ETAPA 5: Limpeza final
+# ---------------------------------------------------------
 
-if [ ${#NGINX_SITES[@]} -eq 0 ]; then
-    echo "❌ Nenhuma configuração encontrada em /etc/nginx/sites-enabled/"
-    exit 1
-fi
+# Remove o arquivo temporário com a lista de imagens
+rm -f "$arquivo_de_imagens"
 
-echo "📋 Arquivos encontrados:"
-for i in "${!NGINX_SITES[@]}"; do
-    echo "  [$i] ${NGINX_SITES[$i]}"
-done
-
-read -rp "👉 Digite o número do arquivo de configuração que deseja modificar: " SITE_CONF_INDEX
-SITE_CONF="${NGINX_SITES[$SITE_CONF_INDEX]}"
-
-if grep -q "location ~\*  \\.(jpg|jpeg|png|gif)\$" "$SITE_CONF"; then
-    echo "✅ Bloco 'location' para imagens já existe em: $SITE_CONF"
-else
-    echo "🛠️ Inserindo bloco 'location' em todos os blocos server do arquivo: $SITE_CONF"
-    sudo cp "$SITE_CONF" "$SITE_CONF.bak"
-
-    sudo awk '
-    BEGIN { inside=0 }
-    /server[ \t]*\{/ { inside=1; print; next }
-    /\}/ {
-        if (inside) {
-            print "location ~*  \.(jpg|jpeg|png|gif)$ {
-                add_header Vary Accept;
-                try_files $uri$webp_extension $uri =404;
-                expires 7d;
-        }";
-            inside=0
-        }
-    }
-    { print }
-    ' "$SITE_CONF.bak" | sudo tee "$SITE_CONF" > /dev/null
-
-    echo "📦 Bloco adicionado com sucesso."
-fi
-
-echo "🔍 Testando configuração do Nginx..."
-if sudo nginx -t; then
-    echo "✅ Configuração válida. Recarregando Nginx..."
-    sudo nginx -s reload
-else
-    echo "❌ Erro na configuração do Nginx. Arquivo original foi mantido em $SITE_CONF.bak"
-fi
+# Exibe mensagem de conclusão
+echo "✅ Conversão finalizada com sucesso."
