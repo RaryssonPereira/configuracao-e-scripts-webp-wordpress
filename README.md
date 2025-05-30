@@ -159,6 +159,70 @@ Salve o conteúdo do script em:
 
 ---
 
-Na próxima parte, veremos o script complementar `converte_webp_apos_3min.sh`, que garante a conversão de imagens mais antigas ou que foram reprocessadas.
+### 🛠️ 5. Script: `converte_webp_apos_3min.sh`
+
+O script `converte_webp_apos_3min.sh` é complementar ao anterior e tem como função garantir que **nenhuma imagem fique sem conversão para WebP**, mesmo que tenha sido enviada há mais de 3 minutos ou movida entre pastas.
+
+Ele percorre o diretório completo de uploads do WordPress e procura por arquivos `.jpg`, `.jpeg`, `.png` e `.gif` que tenham sido modificados **há mais de 3 minutos**. Isso evita conflitos com o script anterior (que atua sobre arquivos muito recentes) e assegura que imagens antigas, restauradas ou esquecidas também sejam convertidas.
+
+### 📄 Criar o script no seu servidor:
+
+Salve o conteúdo do script no seguinte caminho:
+
+```bash
+/opt/scripts/converte_webp_apos_3min.sh
+```
+
+🔗 [Clique aqui para abrir o arquivo `converte_webp_apos_3min.sh` no repositório](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/converte_webp_apos_3min.sh)
+
+✅ Torne o script executável:
+
+```bash
+chmod +x /opt/scripts/converte_webp_apos_3min.sh
+```
+
+---
+
+### ⏱️ 6. Agendamento das tarefas com `cron`
+
+Para que a conversão de imagens para WebP aconteça de forma automática, você pode utilizar o `cron` para executar os dois scripts em momentos diferentes, de forma complementar:
+
+### 🕒 Explicação das crons
+
+- **`converte_webp_antes_3min.sh`**  
+  Este script será executado a **cada 3 minutos** e trata imagens recém-enviadas (modificadas há até 3 minutos). Ideal para capturar novos uploads no momento em que ocorrem.
+
+- **`converte_webp_apos_3min.sh`**  
+  Este script será executado **uma vez por dia, às 2h da manhã**, e percorre todo o diretório de uploads. Ele garante que imagens mais antigas, restauradas ou que tenham passado despercebidas, também sejam convertidas.
+
+### 🧩 Como configurar
+
+Abra o `crontab` do sistema ou adicione ao arquivo `/etc/cron.d/conversao-webp` o seguinte conteúdo:
+
+```cron
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+# Converter imagens recém-modificadas para WebP a cada 3 minutos
+# Para ativar, remova o # e edite o caminho do projeto corretamente:
+#*/3 * * * * www-data /bin/bash /opt/scripts/converte_webp_antes_3min.sh /var/www/PROJETO/wp-content/uploads/$(date +\%Y)/$(date +\%m) > /dev/null 2>&1
+
+# Converter imagens mais antigas (modificadas há mais de 3 minutos) para WebP
+# Ideal para rodar 1x por dia no diretório inteiro de uploads:
+#0 2 * * * www-data /bin/bash /opt/scripts/converte_webp_apos_3min.sh /var/www/PROJETO/wp-content/uploads > /dev/null 2>&1
+```
+
+📎 [Clique aqui para abrir o arquivo `cron-conversao-webp`](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/cron-conversao-webp)
+
+### ⚠️ Importante
+
+- **Descomente as linhas** removendo o `#` do início de cada uma.
+- **Substitua `/PROJETO/`** pelo nome real do diretório onde seu WordPress está instalado.  
+  Exemplo: `/var/www/meusite.com.br/wp-content/uploads`
+
+> ✅ Essas tarefas automatizam completamente a geração de versões `.webp` no seu WordPress, cobrindo imagens novas e antigas com segurança e desempenho.
+
+---
+
+Na próxima (e última) parte, você pode adicionar uma conclusão e recomendações finais.
 
 
