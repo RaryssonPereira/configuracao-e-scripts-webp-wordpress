@@ -38,15 +38,29 @@ Antes de automatizar a conversão de imagens, é necessário garantir que o serv
 
 ### 📦 1. Instale o conversor `cwebp`
 
-Execute o comando abaixo para instalar a ferramenta de conversão `cwebp`, que faz parte do pacote `webp`:
+A ferramenta `cwebp`, que faz parte do pacote `webp`, é utilizada pelos scripts para converter imagens JPEG, PNG e GIF para `.webp`.
+
+Use o comando adequado de acordo com sua distribuição Linux:
+
+#### Para **Ubuntu, Debian, Mint**:
 
 ```bash
-apt install -y webp
-# ou, se preferir:
-apt-get install -y webp
+sudo apt install -y webp
+# ou:
+sudo apt-get install -y webp
 ```
 
-Essa ferramenta será usada pelos scripts para converter imagens JPEG, PNG e GIF para `.webp`.
+#### Para **Red Hat, CentOS, AlmaLinux, Rocky Linux**:
+
+```bash
+sudo yum install -y libwebp-tools
+# ou, se estiver usando dnf (ex: Fedora ou versões mais recentes):
+sudo dnf install -y libwebp-tools
+```
+
+> ⚠️ Obs: Em algumas versões, o pacote pode se chamar apenas `libwebp`. Caso `libwebp-tools` não esteja disponível, tente `libwebp`.
+
+---
 
 ### 🌐 2. Configure o Nginx para servir WebP automaticamente
 
