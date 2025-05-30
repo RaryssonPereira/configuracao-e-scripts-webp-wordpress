@@ -149,7 +149,7 @@ Salve o conteúdo do script em:
 /opt/scripts/converte_webp_antes_3min.sh
 ```
 
-📎 [Clique aqui para abrir o arquivo `converte_webp_antes_3min.sh` no repositório]([https://github.com/SEU_USUARIO/SEU_REPOSITORIO/blob/main/converte_webp_antes_3min.sh](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/converte_webp_antes_3min.sh)
+🔗 [Clique aqui para abrir o arquivo `converte_webp_antes_3min.sh` no repositório](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/converte_webp_antes_3min.sh)
 
 > ✅ Não esqueça de tornar o script executável:
 > 
