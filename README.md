@@ -223,6 +223,66 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/us
 
 ---
 
-Na próxima (e última) parte, você pode adicionar uma conclusão e recomendações finais.
+### 🔄 8. Conversão completa inicial: `converte-todos-para-webp.sh`
+
+Além das automações via `cron`, é importante realizar **uma conversão inicial de todas as imagens antigas já existentes** no diretório `/uploads` do WordPress. Para isso, utilize o script `converte-todos-para-webp.sh`.
+
+Esse script percorre **todos os arquivos de imagem no diretório de uploads**, independentemente da data de modificação, e cria a versão `.webp` caso ainda não exista ou esteja desatualizada.
+
+### 📄 Criar o script no seu servidor:
+
+Salve o conteúdo do script no seguinte caminho:
+
+```bash
+/opt/scripts/converte-todos-para-webp.sh
+```
+
+🔗 [Clique aqui para abrir o arquivo `converte-todos-para-webp.sh` no repositório](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/converte-todos-para-webp.sh)
+
+✅ Torne o script executável:
+
+```bash
+chmod +x /opt/scripts/converte-todos-para-webp.sh
+```
+
+---
+
+### 🖥️ Execução recomendada com `byobu`
+
+Como essa conversão pode demorar dependendo do volume de imagens, o ideal é executá-la dentro de uma sessão segura com `byobu`:
+
+```bash
+byobu new-session -s conversao-webp
+```
+
+Em seguida, execute o script:
+
+```bash
+/opt/scripts/converte-todos-para-webp.sh /var/www/SEU_PROJETO/wp-content/uploads
+```
+
+Para sair da sessão e deixá-la rodando em segundo plano, pressione:
+
+```bash
+Ctrl + A, depois D
+```
+
+Mais tarde, você pode retornar à sessão com:
+
+```bash
+byobu attach -t conversao-webp
+```
+
+---
+
+### 🔁 Posso executar mais de uma vez?
+
+Sim, **não há problema em executar o script mais de uma vez no mesmo WordPress**. Ele apenas atualizará arquivos `.webp` desatualizados e ignorará os que já estiverem atualizados.
+
+> ✅ A execução desse script é recomendada **apenas uma vez por projeto**, logo após a ativação da conversão automática via cron. Ele garante que até as imagens mais antigas estejam convertidas para WebP.
+
+---
+
+Com isso, seu ambiente está 100% preparado para entregar imagens otimizadas no WordPress, com automação contínua para novos uploads e cobertura total para o conteúdo já existente.
 
 
