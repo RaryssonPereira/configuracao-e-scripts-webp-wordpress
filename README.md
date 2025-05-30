@@ -99,7 +99,7 @@ map $http_user_agent $webp_extension {
 }
 ```
 
-📎 [Clique aqui para visualizar o conteúdo do arquivo `webp.conf`](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/webp.conf)
+📎 [Clique aqui para visualizar o conteúdo do arquivo `webp.conf`](https://github.com/RaryssonPereira/configuracao-e-scripts-webp-wordpress/blob/main/webp.conf)
 
 💡 Essas regras garantem que navegadores modernos recebam a versão `.webp`, enquanto bots e navegadores com baixa compatibilidade continuem recebendo `.jpg` ou `.png`. Isso ajuda na indexação correta e melhora o desempenho.
 
@@ -165,7 +165,7 @@ Salve o conteúdo do script em:
 /opt/scripts/converte_webp_antes_3min.sh
 ```
 
-🔗 [Clique aqui para abrir o arquivo `converte_webp_antes_3min.sh` no repositório](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/converte_webp_antes_3min.sh)
+🔗 [Clique aqui para abrir o arquivo `converte_webp_antes_3min.sh` no repositório](https://github.com/RaryssonPereira/configuracao-e-scripts-webp-wordpress/blob/main/converte_webp_antes_3min.sh)
 
 > ✅ Não esqueça de tornar o script executável:
 > 
@@ -189,7 +189,7 @@ Salve o conteúdo do script no seguinte caminho:
 /opt/scripts/converte_webp_apos_3min.sh
 ```
 
-🔗 [Clique aqui para abrir o arquivo `converte_webp_apos_3min.sh` no repositório](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/converte_webp_apos_3min.sh)
+🔗 [Clique aqui para abrir o arquivo `converte_webp_apos_3min.sh` no repositório](https://github.com/RaryssonPereira/configuracao-e-scripts-webp-wordpress/blob/main/converte_webp_apos_3min.sh)
 
 ✅ Torne o script executável:
 
@@ -227,7 +227,7 @@ PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/us
 #0 2 * * * www-data /bin/bash /opt/scripts/converte_webp_apos_3min.sh /var/www/PROJETO/wp-content/uploads > /dev/null 2>&1
 ```
 
-📎 [Clique aqui para abrir o arquivo `cron-conversao-webp`](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/cron-conversao-webp)
+📎 [Clique aqui para abrir o arquivo `cron-conversao-webp`](https://github.com/RaryssonPereira/configuracao-e-scripts-webp-wordpress/blob/main/cron-conversao-webp)
 
 ### ⚠️ Importante
 
@@ -253,7 +253,7 @@ Salve o conteúdo do script no seguinte caminho:
 /opt/scripts/converte-todos-para-webp.sh
 ```
 
-🔗 [Clique aqui para abrir o arquivo `converte-todos-para-webp.sh` no repositório](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/converte-todos-para-webp.sh)
+🔗 [Clique aqui para abrir o arquivo `converte-todos-para-webp.sh` no repositório](https://github.com/RaryssonPereira/configuracao-e-scripts-webp-wordpress/blob/main/converte-todos-para-webp.sh)
 
 ✅ Torne o script executável:
 
