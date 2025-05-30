@@ -299,6 +299,30 @@ Sim, **não há problema em executar o script mais de uma vez no mesmo WordPress
 
 ---
 
-Com isso, seu ambiente está 100% preparado para entregar imagens otimizadas no WordPress, com automação contínua para novos uploads e cobertura total para o conteúdo já existente.
+## 🧾 Conclusão e recomendações finais
 
+Após configurar o Nginx, criar os scripts e agendar as tarefas via `cron`, seu ambiente WordPress estará pronto para **converter automaticamente imagens para WebP** e entregá-las com desempenho otimizado aos navegadores compatíveis.
 
+Essa abordagem traz melhorias significativas para:
+
+- 🚀 Velocidade de carregamento
+- ✅ Melhor pontuação no Google PageSpeed
+- 📉 Redução no consumo de banda
+- 🧑‍💻 Melhor experiência para o usuário final
+
+---
+
+### 🧹 Recomendações finais
+
+Após realizar todas as configurações, **é fundamental limpar o cache do seu site** para garantir que as novas imagens convertidas para `.webp` sejam entregues corretamente:
+
+- Se você utiliza plugins de cache como **WP Rocket**, **LiteSpeed Cache** ou **FlyingPress**, acesse o painel do WordPress e utilize a opção de **“Limpar todo o cache”**.
+- Se o seu site utiliza um serviço de **CDN** (como Cloudflare, BunnyCDN, Akamai, etc.), limpe o cache diretamente no painel da sua CDN.
+
+> 🔁 Isso garante que as próximas páginas carregadas já estejam atualizadas com o cabeçalho `Accept` do navegador e entreguem as versões `.webp` quando possível.
+
+---
+
+Com tudo pronto, você terá um WordPress muito mais leve, rápido e eficiente — atendendo às boas práticas recomendadas pelo Google para performance e SEO técnico.
+
+🎉 **Obrigado por utilizar este projeto!**
