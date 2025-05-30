@@ -53,7 +53,7 @@ Essa ferramenta será usada pelos scripts para converter imagens JPEG, PNG e GIF
 Crie um novo arquivo de configuração para o Nginx:
 
 ```bash
-sudo nano /etc/nginx/conf.d/webp.conf
+sudo vim /etc/nginx/conf.d/webp.conf
 ```
 
 Cole o conteúdo abaixo no arquivo:
@@ -94,7 +94,7 @@ Após configurar o suporte a WebP no Nginx via `webp.conf`, é necessário aplic
 Abra o arquivo de configuração do domínio dentro de `/etc/nginx/sites-enabled/`:
 
 ```bash
-sudo nano /etc/nginx/sites-enabled/dominio.com.conf
+sudo vim /etc/nginx/sites-enabled/dominio.com.conf
 ```
 
 Adicione (ou edite) o seguinte bloco dentro da diretiva `server`:
