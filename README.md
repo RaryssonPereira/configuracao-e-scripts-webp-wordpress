@@ -135,5 +135,30 @@ sudo systemctl reload nginx
 
 ---
 
-Na próxima parte, explicaremos os dois scripts de conversão automática (`converte_webp_antes_3min.sh` e `converte_webp_apos_3min.sh`) e como agendá-los via `cron`.
+### 🛠️ 4. Script: `converte_webp_antes_3min.sh`
+
+Este script tem como objetivo **converter automaticamente imagens recém-enviadas para o WordPress (com menos de 3 minutos de criação ou modificação)** em versões `.webp`. Ele é ideal para rodar via `cron` a cada 3 minutos, garantindo que as imagens novas sejam otimizadas rapidamente após o upload.
+
+Ele verifica o diretório `/uploads` do WordPress (com base no ano e mês atual), identifica arquivos `.jpg`, `.jpeg`, `.png` e `.gif` modificados nos últimos 3 minutos e gera a versão `.webp` caso ainda não exista ou esteja desatualizada.
+
+📄 **Criar o script no seu servidor:**
+
+Salve o conteúdo do script em:
+
+```
+/opt/scripts/converte_webp_antes_3min.sh
+```
+
+📎 [Clique aqui para abrir o arquivo `converte_webp_antes_3min.sh` no repositório](https://github.com/SEU_USUARIO/SEU_REPOSITORIO/blob/main/converte_webp_antes_3min.sh)
+
+> ✅ Não esqueça de tornar o script executável:
+> 
+> ```bash
+> chmod +x /opt/scripts/converte_webp_antes_3min.sh
+> ```
+
+---
+
+Na próxima parte, veremos o script complementar `converte_webp_apos_3min.sh`, que garante a conversão de imagens mais antigas ou que foram reprocessadas.
+
 
