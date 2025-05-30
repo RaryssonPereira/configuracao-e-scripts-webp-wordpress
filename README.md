@@ -85,6 +85,8 @@ map $http_user_agent $webp_extension {
 }
 ```
 
+📎 [Clique aqui para visualizar o conteúdo do arquivo `webp.conf`](https://github.com/RaryssonPereira/script-de-conversao-para-webp.sh/blob/main/webp.conf)
+
 💡 Essas regras garantem que navegadores modernos recebam a versão `.webp`, enquanto bots e navegadores com baixa compatibilidade continuem recebendo `.jpg` ou `.png`. Isso ajuda na indexação correta e melhora o desempenho.
 
 ### 🚀 3. Habilite o uso de imagens WebP no bloco do site
