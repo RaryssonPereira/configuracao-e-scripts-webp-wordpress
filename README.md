@@ -29,3 +29,62 @@ De acordo com o [Google PageSpeed Insights](https://web.dev/serve-images-webp/),
 - **Ideal para WordPress**: acelera o carregamento de páginas e melhora a performance geral do site.
 
 > 💡 **Conclusão**: Utilizar o formato WebP é essencial para quem busca **mais performance, melhor experiência de navegação** e **boas práticas de SEO** em portais WordPress.
+
+---
+
+## ⚙️ Parte 1 – Instalação e configuração do suporte a WebP
+
+Antes de automatizar a conversão de imagens, é necessário garantir que o servidor possua suporte à geração do formato **WebP** e que o **Nginx** esteja configurado para entregar corretamente essas imagens aos navegadores que as suportam.
+
+### 📦 1. Instale o conversor `cwebp`
+
+Execute o comando abaixo para instalar a ferramenta de conversão `cwebp`, que faz parte do pacote `webp`:
+
+```bash
+apt install -y webp
+# ou, se preferir:
+apt-get install -y webp
+```
+
+Essa ferramenta será usada pelos scripts para converter imagens JPEG, PNG e GIF para `.webp`.
+
+### 🌐 2. Configure o Nginx para servir WebP automaticamente
+
+Crie um novo arquivo de configuração para o Nginx:
+
+```bash
+sudo nano /etc/nginx/conf.d/webp.conf
+```
+
+Cole o conteúdo abaixo no arquivo:
+
+```nginx
+# Define a variável $webp_extension_accept com base no cabeçalho "Accept" enviado pelo cliente.
+# Se o cliente aceitar WebP, a extensão será ".webp", caso contrário, será vazia.
+map $http_accept $webp_extension_accept {
+    default "";
+    "~*webp" ".webp";  # Se o cabeçalho Accept contiver "webp", define como .webp
+}
+
+# Define a variável final $webp_extension com base no User-Agent.
+# Essa regra sobrepõe a anterior caso o acesso seja feito por bots ou navegadores específicos.
+map $http_user_agent $webp_extension {
+    default $webp_extension_accept;   # Usa o valor da verificação do Accept como padrão
+
+    "~Firefox"              ".webp";  # Força .webp para Firefox (que aceita mesmo sem declarar no Accept)
+    "~iPhone"               "";       # Força a não usar .webp em iPhones (melhora compatibilidade)
+
+    # Força o uso da imagem tradicional (.jpg/.png) para bots que não suportam WebP:
+    "~facebookexternalhit" "";       # Facebook (usado para preview de links)
+    "~Slackbot"             "";       # Slack
+    "~Twitterbot"           "";       # Twitter
+    "~WhatsApp"             "";       # WhatsApp
+    "~TelegramBot"          "";       # Telegram
+    "~LinkedInBot"          "";       # LinkedIn
+    "~Googlebot"            "";       # Googlebot (melhora indexação de imagens)
+}
+```
+
+💡 Essas regras garantem que navegadores modernos recebam a versão `.webp`, enquanto bots e navegadores com baixa compatibilidade continuem recebendo `.jpg` ou `.png`. Isso ajuda na indexação correta e melhora o desempenho.
+
+
