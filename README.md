@@ -32,7 +32,7 @@ De acordo com o [Google PageSpeed Insights](https://web.dev/serve-images-webp/),
 
 ---
 
-## ⚙️ Parte 1 – Instalação e configuração do suporte a WebP
+## ⚙️ Instalação e configuração do suporte a WebP
 
 Antes de automatizar a conversão de imagens, é necessário garantir que o servidor possua suporte à geração do formato **WebP** e que o **Nginx** esteja configurado para entregar corretamente essas imagens aos navegadores que as suportam.
 
@@ -87,4 +87,53 @@ map $http_user_agent $webp_extension {
 
 💡 Essas regras garantem que navegadores modernos recebam a versão `.webp`, enquanto bots e navegadores com baixa compatibilidade continuem recebendo `.jpg` ou `.png`. Isso ajuda na indexação correta e melhora o desempenho.
 
+### 🚀 3. Habilite o uso de imagens WebP no bloco do site
+
+Após configurar o suporte a WebP no Nginx via `webp.conf`, é necessário aplicar essa lógica no bloco de configuração do site para que as imagens convertidas em `.webp` sejam servidas corretamente quando o navegador for compatível.
+
+Abra o arquivo de configuração do domínio dentro de `/etc/nginx/sites-enabled/`:
+
+```bash
+sudo nano /etc/nginx/sites-enabled/dominio.com.conf
+```
+
+Adicione (ou edite) o seguinte bloco dentro da diretiva `server`:
+
+```nginx
+location ~* \.(jpg|jpeg|png|gif)$ {
+    add_header Vary Accept;
+    try_files $uri$webp_extension $uri =404;
+    expires 7d;
+}
+```
+
+### 🔍 O que esse bloco faz?
+
+- `location ~* \.(jpg|jpeg|png|gif)$`: Intercepta todas as requisições de imagens nos formatos tradicionais.
+- `add_header Vary Accept;`: Informa ao navegador e à CDN (caso exista) que o conteúdo pode variar dependendo do cabeçalho `Accept` (ou seja, se o navegador aceita WebP).
+- `try_files $uri$webp_extension $uri =404;`: 
+  - Primeiro, tenta servir a imagem com a extensão `.webp` (caso o navegador aceite);
+  - Se não existir ou não for compatível, serve a imagem original (`$uri`);
+  - Se nenhuma estiver disponível, retorna erro 404.
+- `expires 7d;`: Adiciona um cabeçalho de cache para o navegador manter a imagem por 7 dias, otimizando o carregamento.
+
+> 💡 Essa configuração garante que o Nginx escolha automaticamente a melhor versão da imagem com base no navegador do visitante, sem necessidade de alterar o código HTML do site.
+
+### ✅ Verifique a sintaxe do Nginx antes de aplicar
+
+Antes de recarregar o Nginx, é recomendável testar se a sintaxe está correta:
+
+```bash
+sudo nginx -t
+```
+
+Se a saída indicar que a configuração está correta, aplique as mudanças com:
+
+```bash
+sudo systemctl reload nginx
+```
+
+---
+
+Na próxima parte, explicaremos os dois scripts de conversão automática (`converte_webp_antes_3min.sh` e `converte_webp_apos_3min.sh`) e como agendá-los via `cron`.
 
