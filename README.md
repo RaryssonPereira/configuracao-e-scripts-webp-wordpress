@@ -1,4 +1,4 @@
-# Conversão automática de imagens para WebP em sites WordPress
+## Conversão automática de imagens para WebP em sites WordPress
 
 ### 👤 Autor
 
