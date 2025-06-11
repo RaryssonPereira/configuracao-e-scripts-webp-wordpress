@@ -1,5 +1,4 @@
-## Conversão automática de imagens para WebP em sites WordPress
-
+# Conversão automática para Imagens WebP em sites WordPress
 ### 👤 Autor
 
 **Rarysson Pereira**  
